@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<project name="lego-jason" basedir="." default="run">
+
+	<property environment="env" />
+	<property file="build.properties" />
+    <property name="mas2j.project.file" value="LEGO-Jason.mas2j"/>
+    <property name="debug" value=""/> <!-- use "-debug" to run in debug mode -->
+    <property name="build.dir" value="${basedir}/bin" />
+    <property name="dist.dir" value="${basedir}/dist" />
+    <property name="jasonJar" value="${env.JASON_HOME}/lib/jason.jar"/>
+    <property name="nxj" value="${env.NXJ_HOME}"/>
+	<property name="lego-jason-nxt.dir" value="${basedir}/../nxt" />
+
+	<path id="boot.classpath"> 
+		<fileset dir="${nxj}/lib" >  <include name="jtools.jar" /> <include name="pccomm.jar" /> <include name="pctools.jar" /> </fileset>
+        <fileset dir="${nxj}/3rdparty/lib" >  <include name="*.jar" /></fileset>
+	</path>
+
+    <path id="project.classpath">
+        <pathelement location="${basedir}"/>
+        <pathelement location="${build.dir}"/>
+        <pathelement location="${jasonJar}"/>
+		<fileset dir="${nxj}/lib" >  <include name="jtools.jar" /> <include name="pccomm.jar" /> <include name="pctools.jar" /> </fileset>
+        <fileset dir="${nxj}/3rdparty/lib" >  <include name="*.jar" /></fileset>		
+        <fileset dir="${lego-jason-nxt.dir}/dist" >  <include name="*.jar" /></fileset>		
+    </path>
+
+	<property name="bootclasspath" refid="boot.classpath" />
+
+    <target name="user-init">
+		<echo>JASON_HOME: ${env.JASON_HOME}</echo>
+		<echo>NXJ_HOME: ${env.NXJ_HOME}</echo>
+		<echo>LEGO-Jason NXT: ${lego-jason-nxt.dir}</echo>
+    </target>
+
+    <target name="init">
+        <mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+        <antcall target="user-init" />
+    </target>
+
+    <target name="compile" depends="init">
+        <condition property="srcdir" value="${basedir}/src/java" else="${basedir}" >
+            <available file="${basedir}/src/java" />
+        </condition>
+        <javac srcdir="${srcdir}" destdir="${build.dir}" debug="true" optimize="true" >
+            <classpath refid="project.classpath"/>
+        </javac>
+    </target>
+    
+    <target name="jar" depends="compile">
+        <delete file="${dist.dir}/${ant.project.name}.jar" />
+    	<copy file="${jasonJar}" tofile="${dist.dir}/${ant.project.name}.jar" />
+    	<copy file="${mas2j.project.file}" tofile="default.mas2j" />
+    	<jar update="yes" jarfile="${dist.dir}/${ant.project.name}.jar" >
+            <fileset dir="${basedir}">
+                <include name="**/*.asl" />
+                <include name="**/*.mas2j" />
+            </fileset>
+            <fileset dir="${build.dir}">
+                <include name="**/*.class" />
+            </fileset>
+    	</jar>
+        <delete file="default.mas2j" />
+    </target>
+
+    <target name="run" depends="compile" >
+        <echo message="Running project ${ant.project.name}" />
+        <java classname="jason.infra.centralised.RunCentralisedMAS"
+              failonerror="true" fork="yes" dir="${basedir}" >
+            <jvmarg value="-Xmx500M"/>
+			<classpath refid="project.classpath"/>
+            <arg line="${mas2j.project.file} ${debug} "/>
+			<jvmarg value="-Dnxj=${nxj}" />
+			<jvmarg value="-Djava.library.path=${nxj}/bin" />
+			<jvmarg value="-Xbootclasspath/a:${nxj}/3rdparty/lib/bluecove.jar:${nxj}/3rdparty/lib/bcel.jar:${nxj}/lib/commons-cli.jar:${nxj}/lib/jtools.jar:${nxj}/lib/pccomm.jar:${nxj}/lib/pctools.jar" />
+        </java>
+    </target>
+
+    <target name="clean" >
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+    </target>
+
+</project>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<project name="lego-jason-nxt" basedir="." default="run">
+
+	<property environment="env" />
+    <property name="debug" value=""/> <!-- use "-debug" to run in debug mode -->
+    <property name="build.dir" value="${basedir}/bin" />
+	<property name="dist.dir" value="${basedir}/dist" />
+    <property name="nxj" value="${env.NXJ_HOME}"/>
+	<property name="launcher-class" value="nxt.LEGOJasonNXT" />
+	<property name="binary" value="${dist.dir}/${ant.project.name}.nxj" />
+
+	
+	<path id="boot.classpath"> 
+		<fileset dir="${nxj}/lib" >  <include name="*.jar" /> </fileset>
+        <fileset dir="${nxj}/3rdparty/lib" >  <include name="*.jar" /></fileset>
+	</path>
+
+    <path id="project.classpath">
+        <pathelement location="${basedir}"/>
+        <pathelement location="${build.dir}"/>
+        <pathelement location="${jasonJar}"/>
+		<fileset dir="${nxj}/lib" >  <include name="*.jar" /> </fileset>
+        <fileset dir="${nxj}/3rdparty/lib" >  <include name="*.jar" /></fileset>		
+    </path>
+
+	<property name="bootclasspath" refid="boot.classpath" />
+
+    <target name="user-init">
+		<echo>NXJ_HOME: ${env.NXJ_HOME}</echo>
+    </target>
+
+    <target name="init">
+        <mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+        <antcall target="user-init" />
+    </target>
+
+    <target name="compile" depends="init">
+        <condition property="srcdir" value="${basedir}/src/java" else="${basedir}" >
+            <available file="${basedir}/src/java" />
+        </condition>
+        <javac srcdir="${srcdir}" destdir="${build.dir}" debug="true" optimize="true" >
+			<bootclasspath refid="boot.classpath"/>
+            <classpath refid="project.classpath"/>
+        </javac>
+    </target>
+    
+    <target name="jar" depends="compile">
+        <delete file="${dist.dir}/${ant.project.name}.jar" />
+    	<jar update="yes" jarfile="${dist.dir}/${ant.project.name}.jar" >
+            <fileset dir="${basedir}">
+                <include name="**/*.asl" />
+            </fileset>
+            <fileset dir="${build.dir}">
+                <include name="**/*.class" />
+            </fileset>
+    	</jar>
+    </target>
+
+	<target name="link" depends="jar"
+		    description="link the binary" >
+		<!-- Link the binary and create a signature file -->
+		<java classname="js.tinyvm.TinyVM">
+			<arg value="--bootclasspath"/>
+			<arg path="${nxj}/lib/classes.jar" /> 
+			<arg value="--classpath"/>
+			<arg path="${dist.dir}/${ant.project.name}.jar" /> 
+			<arg value="--writeorder" />
+			<arg value="LE" />
+			<arg value="${launcher-class}"/>
+			<arg value="-o"/>
+			<arg value="${binary}"/>
+			<!--<arg value="-v"/>-->
+			<classpath refid="project.classpath" />
+		</java>
+	</target>
+
+	<target name="upload" depends="link" description="upload the binary" >
+		<java classname="lejos.pc.tools.NXJUpload" fork="true">
+			<jvmarg value="-Djava.library.path=${nxj}/bin"/>
+			<jvmarg value="-Dnxj.home=${nxj}"/>
+			<arg value="${binary}"/>
+			<classpath refid="project.classpath" />
+		</java>
+	</target>
+
+    <target name="clean" >
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+    </target>
+
+
+
+</project>

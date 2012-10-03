@@ -1,0 +1,49 @@
+/*
+ * Copyright 2010 Andreas Schmidt Jensen
+ *
+ * This file is part of LEGO-Jason-NXT.
+ *
+ * LEGO-Jason-NXT is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * LEGO-Jason-NXT is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LEGO-Jason-NXT.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+LEGO-Jason-NXT Version 1.0 (1 October 2010)
+
+The main goal of the LEGO-Jason-NXT project is to implement an extension for the Jason multi-agent
+system that allows one to write applications executed by the LEGO MINDSTORMS NXT robots.
+
+Required environment variables:
+JASON_HOME = Jason root directory
+NXJ_HOME = NXJ root directory
+
+Build order:
+
+1) nxt:
+cd nxt
+ant jar
+
+2) jason:
+cd jason
+ant jar
+
+To upload to NXT robot:
+cd nxt
+ant upload
+
+To run Jason:
+cd jason
+ant run
+
+Acknowledgement: I thank associate professor Jørgen Villadsen, DTU Informatics, Denmark.
+
+Further information and updates are available here: http://imm.dtu.dk/~jv/LEGO-Jason-NXT

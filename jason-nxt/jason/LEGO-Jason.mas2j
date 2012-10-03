@@ -1,0 +1,63 @@
+/*
+ * Copyright 2010 Andreas Schmidt Jensen
+ *
+ * This file is part of LEGO-Jason-NXT.
+ *
+ * LEGO-Jason-NXT is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * LEGO-Jason-NXT is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LEGO-Jason-NXT.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*****************************
+  = LEGO Agents using Jason =
+   > Agent arguments
+     - btname = Bluetooth name of the NXT
+     - btaddress = Bluetooth address of the NXT
+     - motor{a,b,c} = true/false (true if connected)
+     - sensor{1,2,3,4} = {light,touch,ultrasonic,sound,none}
+     - sleep = how many ms to sleep between perceiving (default: 50)
+   > agentArchClass arch.LEGOAgArchitecture
+   > beliefBaseClass agent.UniqueBelsBB("light(port,_)","obstacle(port,_)","touching(port,_)","sound(port,_)"), 
+   									where port is a key, so that if the robot has 2 light sensors, 
+   									it will be able to keep samples from both ports in the belief base
+ *****************************/
+
+MAS legojason {
+	infrastructure: Centralised
+   
+	agents:
+		// TFG
+		tfg tfg.asl [btname="NXT", btaddress="0016530358ED", motora="true", motorb="true", motorc="false", sensor1="light", sensor2="none", sensor3="ultrasonic", sensor4="none"]
+			agentArchClass arch.LEGOAgArchitecture
+			beliefBaseClass agent.UniqueBelsBB("light(port,_)","sound(port,_)","obstacle(port,_)","touching(port,_)");
+
+		// the line follower
+		//linefollower linefollower.asl [btname="NXT", btaddress="0016530358ED", motora="true", motorb="true", motorc="false", sensor1="light", sensor2="light", sensor3="none", sensor4="none"]
+		//	agentArchClass arch.LEGOAgArchitecture
+		//	beliefBaseClass agent.UniqueBelsBB("light(port,_)","sound(port,_)","obstacle(port,_)","touching(port,_)");
+			
+		// ball catcher
+		//nxt ballcatcher.asl [btname="NXT", btaddress="00165308C61F", motora="true", motorb="true", motorc="true", sensor1="none", sensor2="none", sensor3="ultrasonic", sensor4="touch"]
+		//	agentArchClass arch.LEGOAgArchitecture
+		//	beliefBaseClass agent.UniqueBelsBB("light(port,_)","sound(port,_)","obstacle(port,_)","touching(port,_)");	
+		
+		// communication
+		//obstaclefinder obstaclefinder.asl [btname="NXT", btaddress="00165308C61F", motora="true", motorb="true", motorc="false", sensor1="light", sensor2="none", sensor3="ultrasonic", sensor4="none"]
+		//	agentArchClass arch.LEGOAgArchitecture
+		//	beliefBaseClass agent.UniqueBelsBB("light(port,_)","sound(port,_)","obstacle(port,_)","touching(port,_)");	
+		
+		//blindagent blindagent.asl [btname="CM-NXT", btaddress="0016530A8348", motora="true", motorb="true", motorc="false", sensor1="light", sensor2="none", sensor3="none", sensor4="none"]
+		//	agentArchClass arch.LEGOAgArchitecture
+		//	beliefBaseClass agent.UniqueBelsBB("light(port,_)","sound(port,_)","obstacle(port,_)","touching(port,_)");
+						
+	aslSourcePath: "src/asl"; 
+}

@@ -1,0 +1,26 @@
+Este trabalho busca integrar duas áreas de estudo da Inteligência Artificial, a Robótica e Agentes Inteligentes. Objetiva-se realizar o planejamento de ações e percepções de agentes inteligentes BDI para robôs LEGO Mindstorms NXT. Para isso, é utilizado o framework Jason para programação de sistemas multiagentes e a linguagem de programação leJOS NXJ para a comunicação entre o computador e o robô.
+
+
+Variáveis de ambiente necessárias:
+JASON_HOME = diretório root do Jason
+NXJ_HOME = diretório root do NXJ
+
+Ordem de compilação:
+
+1) nxt:
+cd nxt
+ant jar
+
+2) jason:
+cd jason
+ant jar
+
+Para dar upload do código em lejos para o robô:
+cd nxt
+ant upload
+
+Para rodar o código em Jason:
+cd jason
+ant run
+
+Para uma explicação mais detalhada, do projeto e dos passos para execução ler o documento TFG_[Rafael Cauê Cardoso], que pode ser encontrado no diretório principal do projeto.
